@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5eee7">
+<title>Declutter Countdown ✨</title>
+<style>
+:root{--bg:#f5eee7;--card:#fffdf9;--ink:#352f2b;--muted:#83776f;--accent:#a8765e;--green:#66816b;--soft:#eee2d8;--purple:#e6d9e8;--line:#eaded5}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(160deg,#fff9f4,#f5eee7 55%,#efe3da);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+main{max-width:760px;margin:auto;padding:18px 15px 55px}
+header{text-align:center;padding:7px 0 17px}
+header .emoji{font-size:28px} h1{font-size:34px;margin:5px 0;letter-spacing:-1.5px} .sub{color:var(--muted);font-size:15px}
+.pill{display:inline-block;margin-top:10px;background:#eadcd2;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:750}
+.card{background:rgba(255,253,249,.96);border:1px solid var(--line);border-radius:25px;padding:18px;margin:12px 0;box-shadow:0 8px 26px rgba(90,65,48,.07)}
+.small{font-size:11px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;font-weight:800}
+.mission{padding:17px 0;border-top:1px solid var(--line)}
+.mission:first-child{border-top:0}
+.room{font-size:11px;color:var(--accent);font-weight:850;text-transform:uppercase;letter-spacing:.5px}
+h2{font-size:23px;margin:4px 0 4px} h3{font-size:19px;margin:3px 0 4px}
+.detail{font-size:14px;line-height:1.5;color:#716760;margin:0 0 10px}
+button{border:0;border-radius:13px;padding:11px 14px;font-size:13px;font-weight:800}
+.pick{background:var(--accent);color:white} .selected{background:var(--green);color:white}
+.steps{margin-top:13px;background:#f8f1eb;border-radius:17px;padding:12px}
+.stepsTitle{font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.7px;color:#8c6c5b;margin-bottom:4px}
+.step{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-top:1px solid #eaded5;font-size:14px;line-height:1.35}
+.step:first-of-type{border-top:0}
+.step input{width:18px;height:18px;flex:0 0 auto;margin-top:1px;accent-color:var(--green)}
+.step.done span{text-decoration:line-through;color:#9a918a}
+.timer{font-size:70px;text-align:center;font-weight:700;letter-spacing:-5px;margin:3px 0}
+.timerHint{text-align:center;color:var(--muted);font-size:12px;margin-bottom:12px}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.soft{background:var(--soft)} .surprise{background:var(--purple);color:#604d65} .complete{background:var(--green);color:white}
+.warning{display:flex;justify-content:center;gap:7px;color:var(--muted);font-size:12px;margin-top:12px}
+.warning input{width:17px;height:17px;accent-color:var(--accent)}
+.selectedBox{border:2px solid #d3b29f}
+.progress{height:8px;background:#eee5df;border-radius:99px;overflow:hidden;margin-top:10px}
+.bar{height:100%;background:linear-gradient(90deg,var(--accent),#d6b19b);width:0}
+.ptext{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:6px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:#352f2b;color:white;padding:12px 16px;border-radius:14px;font-weight:750;font-size:13px;transition:.2s;z-index:20;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:#a0938a;font-size:11px;margin-top:20px}
+
+.welcome{background:linear-gradient(135deg,#fffaf5,#f0e3da);text-align:center;padding:24px 18px}.welcomeEmoji{font-size:38px;margin-bottom:6px}.welcome h2{font-size:27px;letter-spacing:-.7px;margin:4px 0 7px}.welcome p{color:var(--muted);line-height:1.5;margin:0 auto 16px;max-width:500px}.quickButtons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.quickButtons button{font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="emoji">✨ 🏡 ✨</div>
+<h1>Declutter Countdown</h1>
+<div class="sub">One hour. One small mission. A lighter home.</div>
+<div class="pill">Pick whatever inspires you today 💛</div>
+</header>
+
+<section class="card welcome">
+<div class="welcomeEmoji">🌸🧺✨</div>
+<h2 id="greeting">Good morning! 💛</h2>
+<p>What are you in the mood to declutter today?<br>There is no right order. Pick what calls to you — or let me choose.</p>
+<div class="quickButtons">
+<button class="surprise" id="welcomeSurprise">🎲 Surprise me</button>
+<button class="pick" id="browseMissions">🧺 Show me the missions</button>
+</div>
+</section>
+
+<section class="card selectedBox">
+<div class="small">Your selected mission</div>
+<h2 id="selectedName">Nothing selected yet</h2>
+<p id="selectedDetail" style="color:#716760;line-height:1.5">Pick any mission below — or let the app surprise you.</p>
+<div class="row">
+<button class="surprise" id="surprise">🎲 Surprise me</button>
+<button class="complete" id="complete">✓ Mark complete</button>
+</div>
+</section>
+
+<section class="card">
+<div class="small">60-minute timer</div>
+<div class="timer" id="timer">60:00</div>
+<div class="timerHint" id="timerHint">Choose a mission first.</div>
+<div class="row">
+<button class="pick" id="start">▶ Start</button>
+<button class="soft" id="reset">↻ Reset</button>
+</div>
+<label class="warning"><input id="warning" type="checkbox"> Warn me when 10 minutes remain</label>
+</section>
+
+<section class="card">
+<h2>🧺 All missions</h2>
+<p class="small" style="text-transform:none;letter-spacing:0;font-weight:500">45 missions · Each one has its own detailed 60-minute mini-plan.</p>
+<div id="missions">
+
+    <article class="mission" id="mission-0" data-index="0">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Mugs &amp; glasses</h3>
+      <p class="detail">Take everything out and keep the ones you actually love and use.</p>
+      <button class="pick" onclick="selectMission(0)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="0-0"><span>Take everything out of the cabinet</span></label><label class="step"><input type="checkbox" data-step="0-1"><span>Remove chipped, duplicate or rarely used pieces</span></label><label class="step"><input type="checkbox" data-step="0-2"><span>Keep only the mugs and glasses you genuinely love</span></label><label class="step"><input type="checkbox" data-step="0-3"><span>Wipe the shelf/cabinet</span></label><label class="step"><input type="checkbox" data-step="0-4"><span>Put the keepers back with the everyday pieces easiest to reach</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-1" data-index="1">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Plates &amp; bowls</h3>
+      <p class="detail">Remove chipped, duplicated or rarely used pieces.</p>
+      <button class="pick" onclick="selectMission(1)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="1-0"><span>Take everything out</span></label><label class="step"><input type="checkbox" data-step="1-1"><span>Remove chipped, duplicate or rarely used pieces</span></label><label class="step"><input type="checkbox" data-step="1-2"><span>Create a simple everyday set</span></label><label class="step"><input type="checkbox" data-step="1-3"><span>Wipe the shelf</span></label><label class="step"><input type="checkbox" data-step="1-4"><span>Put everything back neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-2" data-index="2">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Containers &amp; lids</h3>
+      <p class="detail">Match every container with a lid. Recycle orphan containers.</p>
+      <button class="pick" onclick="selectMission(2)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="2-0"><span>Take every food container and lid out</span></label><label class="step"><input type="checkbox" data-step="2-1"><span>Match each container with its lid</span></label><label class="step"><input type="checkbox" data-step="2-2"><span>Recycle orphaned or damaged pieces</span></label><label class="step"><input type="checkbox" data-step="2-3"><span>Choose the best everyday containers</span></label><label class="step"><input type="checkbox" data-step="2-4"><span>Stack the keepers neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-3" data-index="3">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Cooking utensils</h3>
+      <p class="detail">Declutter tools and gadgets you never reach for.</p>
+      <button class="pick" onclick="selectMission(3)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="3-0"><span>Empty the utensil drawer/container</span></label><label class="step"><input type="checkbox" data-step="3-1"><span>Group similar tools together</span></label><label class="step"><input type="checkbox" data-step="3-2"><span>Remove duplicates and gadgets you never use</span></label><label class="step"><input type="checkbox" data-step="3-3"><span>Keep the tools you actually reach for</span></label><label class="step"><input type="checkbox" data-step="3-4"><span>Put the drawer back neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-4" data-index="4">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Pots &amp; pans</h3>
+      <p class="detail">Keep the pieces you use; remove duplicates and damaged items.</p>
+      <button class="pick" onclick="selectMission(4)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="4-0"><span>Take pots and pans out</span></label><label class="step"><input type="checkbox" data-step="4-1"><span>Remove damaged or duplicate pieces</span></label><label class="step"><input type="checkbox" data-step="4-2"><span>Choose your everyday favourites</span></label><label class="step"><input type="checkbox" data-step="4-3"><span>Check lids and matching pieces</span></label><label class="step"><input type="checkbox" data-step="4-4"><span>Stack them so the most-used are easiest to reach</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-5" data-index="5">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Pantry</h3>
+      <p class="detail">Check expiry dates and remove food you realistically won&#x27;t eat.</p>
+      <button class="pick" onclick="selectMission(5)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="5-0"><span>Check expiry dates</span></label><label class="step"><input type="checkbox" data-step="5-1"><span>Remove food you know you will not eat</span></label><label class="step"><input type="checkbox" data-step="5-2"><span>Group similar ingredients</span></label><label class="step"><input type="checkbox" data-step="5-3"><span>Create a small &#x27;use me first&#x27; area</span></label><label class="step"><input type="checkbox" data-step="5-4"><span>Wipe the shelf and put everything back</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-6" data-index="6">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Fridge &amp; freezer</h3>
+      <p class="detail">Clear forgotten food and wipe one shelf at a time.</p>
+      <button class="pick" onclick="selectMission(6)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="6-0"><span>Check the fridge for forgotten food</span></label><label class="step"><input type="checkbox" data-step="6-1"><span>Check the freezer for mystery items</span></label><label class="step"><input type="checkbox" data-step="6-2"><span>Discard expired or unusable food</span></label><label class="step"><input type="checkbox" data-step="6-3"><span>Group similar foods together</span></label><label class="step"><input type="checkbox" data-step="6-4"><span>Wipe one shelf/drawer and reset it</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-7" data-index="7">
+      <div class="room">🍽️ Kitchen</div>
+      <h3>Kitchen countertops</h3>
+      <p class="detail">Put away everything that doesn&#x27;t need to live on the counter.</p>
+      <button class="pick" onclick="selectMission(7)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="7-0"><span>Clear everything from the countertops</span></label><label class="step"><input type="checkbox" data-step="7-1"><span>Put away items that have a home</span></label><label class="step"><input type="checkbox" data-step="7-2"><span>Remove things that do not belong in the kitchen</span></label><label class="step"><input type="checkbox" data-step="7-3"><span>Choose only the items that deserve counter space</span></label><label class="step"><input type="checkbox" data-step="7-4"><span>Wipe the cleared surfaces</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-8" data-index="8">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Tops &amp; shirts</h3>
+      <p class="detail">Keep what fits, feels good and gets worn. Donate or sell the rest.</p>
+      <button class="pick" onclick="selectMission(8)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="8-0"><span>Pull out one category at a time</span></label><label class="step"><input type="checkbox" data-step="8-1"><span>Remove anything that does not fit</span></label><label class="step"><input type="checkbox" data-step="8-2"><span>Remove pieces you never choose</span></label><label class="step"><input type="checkbox" data-step="8-3"><span>Create keep/donate/sell piles</span></label><label class="step"><input type="checkbox" data-step="8-4"><span>Put the keepers back neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-9" data-index="9">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Trousers &amp; jeans</h3>
+      <p class="detail">Remove pieces that don&#x27;t fit or never get worn.</p>
+      <button class="pick" onclick="selectMission(9)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="9-0"><span>Pull everything out</span></label><label class="step"><input type="checkbox" data-step="9-1"><span>Try on anything you&#x27;re unsure about</span></label><label class="step"><input type="checkbox" data-step="9-2"><span>Remove uncomfortable or rarely worn pieces</span></label><label class="step"><input type="checkbox" data-step="9-3"><span>Create keep/donate/sell piles</span></label><label class="step"><input type="checkbox" data-step="9-4"><span>Organize the keepers</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-10" data-index="10">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Dresses</h3>
+      <p class="detail">Keep the dresses you genuinely love and would choose again.</p>
+      <button class="pick" onclick="selectMission(10)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="10-0"><span>Look at every dress</span></label><label class="step"><input type="checkbox" data-step="10-1"><span>Remove anything that does not fit or feel good</span></label><label class="step"><input type="checkbox" data-step="10-2"><span>Ask &#x27;Would I choose this again today?&#x27;</span></label><label class="step"><input type="checkbox" data-step="10-3"><span>Create keep/donate/sell piles</span></label><label class="step"><input type="checkbox" data-step="10-4"><span>Hang the keepers neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-11" data-index="11">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Gym clothes</h3>
+      <p class="detail">Remove worn-out pieces and things you never wear.</p>
+      <button class="pick" onclick="selectMission(11)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="11-0"><span>Gather gym clothes together</span></label><label class="step"><input type="checkbox" data-step="11-1"><span>Remove worn-out pieces</span></label><label class="step"><input type="checkbox" data-step="11-2"><span>Remove pieces you never choose</span></label><label class="step"><input type="checkbox" data-step="11-3"><span>Keep enough for your real routine</span></label><label class="step"><input type="checkbox" data-step="11-4"><span>Fold/organize the keepers</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-12" data-index="12">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Underwear &amp; socks</h3>
+      <p class="detail">Remove uncomfortable, damaged or mismatched items.</p>
+      <button class="pick" onclick="selectMission(12)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="12-0"><span>Empty the drawer</span></label><label class="step"><input type="checkbox" data-step="12-1"><span>Remove damaged or uncomfortable pieces</span></label><label class="step"><input type="checkbox" data-step="12-2"><span>Match socks</span></label><label class="step"><input type="checkbox" data-step="12-3"><span>Remove excess duplicates</span></label><label class="step"><input type="checkbox" data-step="12-4"><span>Fold and organize what remains</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-13" data-index="13">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Shoes</h3>
+      <p class="detail">Declutter shoes that hurt, don&#x27;t fit or never get worn.</p>
+      <button class="pick" onclick="selectMission(13)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="13-0"><span>Gather shoes together</span></label><label class="step"><input type="checkbox" data-step="13-1"><span>Remove painful or uncomfortable pairs</span></label><label class="step"><input type="checkbox" data-step="13-2"><span>Remove pairs you never wear</span></label><label class="step"><input type="checkbox" data-step="13-3"><span>Clean or repair obvious keepers</span></label><label class="step"><input type="checkbox" data-step="13-4"><span>Organize the remaining shoes</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-14" data-index="14">
+      <div class="room">👗 Wardrobe</div>
+      <h3>Bags &amp; accessories</h3>
+      <p class="detail">Keep the bags, belts and accessories you genuinely use.</p>
+      <button class="pick" onclick="selectMission(14)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="14-0"><span>Gather bags and accessories</span></label><label class="step"><input type="checkbox" data-step="14-1"><span>Remove duplicates and forgotten items</span></label><label class="step"><input type="checkbox" data-step="14-2"><span>Keep the pieces you genuinely use</span></label><label class="step"><input type="checkbox" data-step="14-3"><span>Create donate/sell piles</span></label><label class="step"><input type="checkbox" data-step="14-4"><span>Organize the keepers</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-15" data-index="15">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>Books</h3>
+      <p class="detail">Remove books you won&#x27;t reread or realistically read.</p>
+      <button class="pick" onclick="selectMission(15)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="15-0"><span>Take books off one shelf at a time</span></label><label class="step"><input type="checkbox" data-step="15-1"><span>Remove books you will not reread</span></label><label class="step"><input type="checkbox" data-step="15-2"><span>Remove books you realistically will not read</span></label><label class="step"><input type="checkbox" data-step="15-3"><span>Create a donate pile</span></label><label class="step"><input type="checkbox" data-step="15-4"><span>Put favourite books back with breathing room</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-16" data-index="16">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>To-read shelf</h3>
+      <p class="detail">Create a small, intentional pile of books you truly want to read.</p>
+      <button class="pick" onclick="selectMission(16)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="16-0"><span>Gather unread books</span></label><label class="step"><input type="checkbox" data-step="16-1"><span>Be honest about what you will actually read</span></label><label class="step"><input type="checkbox" data-step="16-2"><span>Choose a manageable to-read pile</span></label><label class="step"><input type="checkbox" data-step="16-3"><span>Donate or relocate the rest</span></label><label class="step"><input type="checkbox" data-step="16-4"><span>Create a neat dedicated reading section</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-17" data-index="17">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>Old paperwork</h3>
+      <p class="detail">Recycle receipts, menus, old notes and unnecessary printouts.</p>
+      <button class="pick" onclick="selectMission(17)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="17-0"><span>Gather loose papers</span></label><label class="step"><input type="checkbox" data-step="17-1"><span>Recycle old receipts and menus</span></label><label class="step"><input type="checkbox" data-step="17-2"><span>Remove outdated notes</span></label><label class="step"><input type="checkbox" data-step="17-3"><span>Separate anything important</span></label><label class="step"><input type="checkbox" data-step="17-4"><span>Recycle the final paper pile</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-18" data-index="18">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>Important documents</h3>
+      <p class="detail">File or scan anything worth keeping; discard duplicates.</p>
+      <button class="pick" onclick="selectMission(18)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="18-0"><span>Gather important documents</span></label><label class="step"><input type="checkbox" data-step="18-1"><span>Separate keep/archive/discard</span></label><label class="step"><input type="checkbox" data-step="18-2"><span>Scan anything useful digitally</span></label><label class="step"><input type="checkbox" data-step="18-3"><span>Remove duplicate copies</span></label><label class="step"><input type="checkbox" data-step="18-4"><span>File the keepers in one logical place</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-19" data-index="19">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>Manuals &amp; packaging</h3>
+      <p class="detail">Recycle manuals, boxes and instructions you no longer need.</p>
+      <button class="pick" onclick="selectMission(19)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="19-0"><span>Gather manuals and boxes</span></label><label class="step"><input type="checkbox" data-step="19-1"><span>Match manuals to items you still own</span></label><label class="step"><input type="checkbox" data-step="19-2"><span>Recycle packaging you do not need</span></label><label class="step"><input type="checkbox" data-step="19-3"><span>Keep only genuinely useful instructions</span></label><label class="step"><input type="checkbox" data-step="19-4"><span>Create one small manual/document area</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-20" data-index="20">
+      <div class="room">📚 Books &amp; Paper</div>
+      <h3>Bookshelf styling</h3>
+      <p class="detail">Dust, regroup and simplify the visible shelves.</p>
+      <button class="pick" onclick="selectMission(20)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="20-0"><span>Remove everything from one shelf</span></label><label class="step"><input type="checkbox" data-step="20-1"><span>Dust the shelf</span></label><label class="step"><input type="checkbox" data-step="20-2"><span>Group books logically</span></label><label class="step"><input type="checkbox" data-step="20-3"><span>Remove decorative clutter you do not love</span></label><label class="step"><input type="checkbox" data-step="20-4"><span>Put back only your favourites</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-21" data-index="21">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Skincare</h3>
+      <p class="detail">Remove empty, expired or abandoned products.</p>
+      <button class="pick" onclick="selectMission(21)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="21-0"><span>Gather skincare together</span></label><label class="step"><input type="checkbox" data-step="21-1"><span>Check expiry/open-date information</span></label><label class="step"><input type="checkbox" data-step="21-2"><span>Remove empty or abandoned products</span></label><label class="step"><input type="checkbox" data-step="21-3"><span>Create a &#x27;finish first&#x27; group</span></label><label class="step"><input type="checkbox" data-step="21-4"><span>Organize everyday products where you can see them</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-22" data-index="22">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Hair &amp; body products</h3>
+      <p class="detail">Declutter products you never reach for.</p>
+      <button class="pick" onclick="selectMission(22)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="22-0"><span>Gather products together</span></label><label class="step"><input type="checkbox" data-step="22-1"><span>Remove empty or abandoned products</span></label><label class="step"><input type="checkbox" data-step="22-2"><span>Combine or group similar items</span></label><label class="step"><input type="checkbox" data-step="22-3"><span>Create a &#x27;finish first&#x27; group</span></label><label class="step"><input type="checkbox" data-step="22-4"><span>Organize the keepers</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-23" data-index="23">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Makeup</h3>
+      <p class="detail">Remove expired makeup and products you don&#x27;t use.</p>
+      <button class="pick" onclick="selectMission(23)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="23-0"><span>Gather makeup together</span></label><label class="step"><input type="checkbox" data-step="23-1"><span>Remove expired or dried-out products</span></label><label class="step"><input type="checkbox" data-step="23-2"><span>Remove products you never use</span></label><label class="step"><input type="checkbox" data-step="23-3"><span>Create an everyday makeup group</span></label><label class="step"><input type="checkbox" data-step="23-4"><span>Organize the keepers</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-24" data-index="24">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Toiletries</h3>
+      <p class="detail">Reduce duplicates and travel-size products.</p>
+      <button class="pick" onclick="selectMission(24)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="24-0"><span>Gather toiletries</span></label><label class="step"><input type="checkbox" data-step="24-1"><span>Remove duplicates you do not need</span></label><label class="step"><input type="checkbox" data-step="24-2"><span>Remove empty or abandoned products</span></label><label class="step"><input type="checkbox" data-step="24-3"><span>Create a small travel-size area if useful</span></label><label class="step"><input type="checkbox" data-step="24-4"><span>Organize everyday toiletries</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-25" data-index="25">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Supplements</h3>
+      <p class="detail">Check dates and organize what you actually use.</p>
+      <button class="pick" onclick="selectMission(25)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="25-0"><span>Gather supplements</span></label><label class="step"><input type="checkbox" data-step="25-1"><span>Check expiry dates</span></label><label class="step"><input type="checkbox" data-step="25-2"><span>Remove anything you no longer use</span></label><label class="step"><input type="checkbox" data-step="25-3"><span>Group current products together</span></label><label class="step"><input type="checkbox" data-step="25-4"><span>Organize them so they are easy to find</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-26" data-index="26">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Bathroom drawers</h3>
+      <p class="detail">Empty one drawer completely and put back only what belongs.</p>
+      <button class="pick" onclick="selectMission(26)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="26-0"><span>Empty one drawer completely</span></label><label class="step"><input type="checkbox" data-step="26-1"><span>Discard rubbish and empty packaging</span></label><label class="step"><input type="checkbox" data-step="26-2"><span>Remove products that belong elsewhere</span></label><label class="step"><input type="checkbox" data-step="26-3"><span>Group similar items</span></label><label class="step"><input type="checkbox" data-step="26-4"><span>Put only useful items back</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-27" data-index="27">
+      <div class="room">🛁 Bathroom</div>
+      <h3>Under the sink</h3>
+      <p class="detail">Remove old products and create breathing room.</p>
+      <button class="pick" onclick="selectMission(27)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="27-0"><span>Take everything out</span></label><label class="step"><input type="checkbox" data-step="27-1"><span>Remove expired or abandoned products</span></label><label class="step"><input type="checkbox" data-step="27-2"><span>Group cleaning/toiletry items</span></label><label class="step"><input type="checkbox" data-step="27-3"><span>Discard empty packaging</span></label><label class="step"><input type="checkbox" data-step="27-4"><span>Put the useful items back neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-28" data-index="28">
+      <div class="room">🛋️ Living Room</div>
+      <h3>Coffee table</h3>
+      <p class="detail">Clear the surface and keep only a few intentional pieces.</p>
+      <button class="pick" onclick="selectMission(28)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="28-0"><span>Clear everything off</span></label><label class="step"><input type="checkbox" data-step="28-1"><span>Return items that belong elsewhere</span></label><label class="step"><input type="checkbox" data-step="28-2"><span>Remove clutter you do not need</span></label><label class="step"><input type="checkbox" data-step="28-3"><span>Choose a few intentional pieces</span></label><label class="step"><input type="checkbox" data-step="28-4"><span>Wipe the surface</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-29" data-index="29">
+      <div class="room">🛋️ Living Room</div>
+      <h3>TV unit</h3>
+      <p class="detail">Remove random objects, old packaging and unused items.</p>
+      <button class="pick" onclick="selectMission(29)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="29-0"><span>Clear the unit</span></label><label class="step"><input type="checkbox" data-step="29-1"><span>Remove old packaging and random objects</span></label><label class="step"><input type="checkbox" data-step="29-2"><span>Sort remotes/cables</span></label><label class="step"><input type="checkbox" data-step="29-3"><span>Return items to their proper homes</span></label><label class="step"><input type="checkbox" data-step="29-4"><span>Wipe the surface</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-30" data-index="30">
+      <div class="room">🛋️ Living Room</div>
+      <h3>Shelves &amp; décor</h3>
+      <p class="detail">Keep what you genuinely love; remove visual noise.</p>
+      <button class="pick" onclick="selectMission(30)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="30-0"><span>Take décor from one area down</span></label><label class="step"><input type="checkbox" data-step="30-1"><span>Dust the shelves</span></label><label class="step"><input type="checkbox" data-step="30-2"><span>Keep only pieces you genuinely love</span></label><label class="step"><input type="checkbox" data-step="30-3"><span>Remove visual duplicates</span></label><label class="step"><input type="checkbox" data-step="30-4"><span>Style the remaining pieces with space around them</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-31" data-index="31">
+      <div class="room">🛏️ Bedroom</div>
+      <h3>Bedside tables</h3>
+      <p class="detail">Clear the surface and drawers of forgotten items.</p>
+      <button class="pick" onclick="selectMission(31)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="31-0"><span>Clear the bedside surface</span></label><label class="step"><input type="checkbox" data-step="31-1"><span>Empty the drawers</span></label><label class="step"><input type="checkbox" data-step="31-2"><span>Remove rubbish and random objects</span></label><label class="step"><input type="checkbox" data-step="31-3"><span>Keep only useful bedtime items nearby</span></label><label class="step"><input type="checkbox" data-step="31-4"><span>Wipe and reset the space</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-32" data-index="32">
+      <div class="room">🛏️ Bedroom</div>
+      <h3>Under-bed storage</h3>
+      <p class="detail">Remove things you forgot you owned.</p>
+      <button class="pick" onclick="selectMission(32)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="32-0"><span>Pull out the stored items</span></label><label class="step"><input type="checkbox" data-step="32-1"><span>Identify forgotten items</span></label><label class="step"><input type="checkbox" data-step="32-2"><span>Remove things you no longer need</span></label><label class="step"><input type="checkbox" data-step="32-3"><span>Create donate/sell/discard piles</span></label><label class="step"><input type="checkbox" data-step="32-4"><span>Put back only intentional storage</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-33" data-index="33">
+      <div class="room">🔌 Tech</div>
+      <h3>Cables &amp; chargers</h3>
+      <p class="detail">Identify mystery cables and recycle broken duplicates.</p>
+      <button class="pick" onclick="selectMission(33)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="33-0"><span>Gather loose cables</span></label><label class="step"><input type="checkbox" data-step="33-1"><span>Identify what each cable belongs to</span></label><label class="step"><input type="checkbox" data-step="33-2"><span>Recycle broken or obsolete cables</span></label><label class="step"><input type="checkbox" data-step="33-3"><span>Pair chargers with devices</span></label><label class="step"><input type="checkbox" data-step="33-4"><span>Store the useful ones together</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-34" data-index="34">
+      <div class="room">🔌 Tech</div>
+      <h3>Random tech drawer</h3>
+      <p class="detail">Keep useful accessories; remove obsolete bits.</p>
+      <button class="pick" onclick="selectMission(34)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="34-0"><span>Empty the drawer</span></label><label class="step"><input type="checkbox" data-step="34-1"><span>Identify each accessory</span></label><label class="step"><input type="checkbox" data-step="34-2"><span>Remove obsolete or duplicate items</span></label><label class="step"><input type="checkbox" data-step="34-3"><span>Recycle electronic clutter appropriately</span></label><label class="step"><input type="checkbox" data-step="34-4"><span>Put useful accessories back neatly</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-35" data-index="35">
+      <div class="room">✨ Final Reset</div>
+      <h3>Entrance</h3>
+      <p class="detail">Declutter shoes, bags, keys, mail and random objects.</p>
+      <button class="pick" onclick="selectMission(35)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="35-0"><span>Clear shoes, bags and surfaces</span></label><label class="step"><input type="checkbox" data-step="35-1"><span>Recycle/discard old mail</span></label><label class="step"><input type="checkbox" data-step="35-2"><span>Return keys and everyday items to their homes</span></label><label class="step"><input type="checkbox" data-step="35-3"><span>Remove shoes/bags you do not use</span></label><label class="step"><input type="checkbox" data-step="35-4"><span>Create a calm, clear entryway</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-36" data-index="36">
+      <div class="room">✨ Final Reset</div>
+      <h3>The mystery drawer</h3>
+      <p class="detail">Empty it completely. Everything needs a real home.</p>
+      <button class="pick" onclick="selectMission(36)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="36-0"><span>Empty the entire drawer</span></label><label class="step"><input type="checkbox" data-step="36-1"><span>Group similar objects</span></label><label class="step"><input type="checkbox" data-step="36-2"><span>Throw away obvious rubbish</span></label><label class="step"><input type="checkbox" data-step="36-3"><span>Relocate anything that has a real home</span></label><label class="step"><input type="checkbox" data-step="36-4"><span>Put back only useful items</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-37" data-index="37">
+      <div class="room">✨ Final Reset</div>
+      <h3>Relocation round</h3>
+      <p class="detail">Return every stray item to its proper home.</p>
+      <button class="pick" onclick="selectMission(37)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="37-0"><span>Walk through every room</span></label><label class="step"><input type="checkbox" data-step="37-1"><span>Collect objects that are in the wrong place</span></label><label class="step"><input type="checkbox" data-step="37-2"><span>Return each item to its home</span></label><label class="step"><input type="checkbox" data-step="37-3"><span>Create a small &#x27;no home yet&#x27; pile</span></label><label class="step"><input type="checkbox" data-step="37-4"><span>Give those final items a permanent home</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-38" data-index="38">
+      <div class="room">✨ Final Reset</div>
+      <h3>Visitor walk</h3>
+      <p class="detail">Walk through the house as a visitor and remove visual clutter.</p>
+      <button class="pick" onclick="selectMission(38)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="38-0"><span>Walk in through your front door</span></label><label class="step"><input type="checkbox" data-step="38-1"><span>Look at the home as a first-time visitor</span></label><label class="step"><input type="checkbox" data-step="38-2"><span>Identify the 5 most visually distracting things</span></label><label class="step"><input type="checkbox" data-step="38-3"><span>Remove or relocate them</span></label><label class="step"><input type="checkbox" data-step="38-4"><span>Do one final surface reset</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-39" data-index="39">
+      <div class="room">✨ Final Reset</div>
+      <h3>Guest bathroom</h3>
+      <p class="detail">Clear counters, fresh towels and a quick clean.</p>
+      <button class="pick" onclick="selectMission(39)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="39-0"><span>Clear the counter</span></label><label class="step"><input type="checkbox" data-step="39-1"><span>Remove personal clutter</span></label><label class="step"><input type="checkbox" data-step="39-2"><span>Put out fresh towels</span></label><label class="step"><input type="checkbox" data-step="39-3"><span>Check toiletries and toilet paper</span></label><label class="step"><input type="checkbox" data-step="39-4"><span>Give the room a quick clean</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-40" data-index="40">
+      <div class="room">✨ Final Reset</div>
+      <h3>Bedroom guest-ready</h3>
+      <p class="detail">Fresh bedding and clear visible surfaces.</p>
+      <button class="pick" onclick="selectMission(40)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="40-0"><span>Clear visible surfaces</span></label><label class="step"><input type="checkbox" data-step="40-1"><span>Put away clothes and random objects</span></label><label class="step"><input type="checkbox" data-step="40-2"><span>Freshen the bedding</span></label><label class="step"><input type="checkbox" data-step="40-3"><span>Clear the bedside area</span></label><label class="step"><input type="checkbox" data-step="40-4"><span>Create a calm, welcoming room</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-41" data-index="41">
+      <div class="room">✨ Final Reset</div>
+      <h3>Kitchen guest-ready</h3>
+      <p class="detail">Clear counters, empty bins and finish loose ends.</p>
+      <button class="pick" onclick="selectMission(41)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="41-0"><span>Clear countertops</span></label><label class="step"><input type="checkbox" data-step="41-1"><span>Put away appliances/items that do not need to be out</span></label><label class="step"><input type="checkbox" data-step="41-2"><span>Empty rubbish/recycling</span></label><label class="step"><input type="checkbox" data-step="41-3"><span>Check sink and dishes</span></label><label class="step"><input type="checkbox" data-step="41-4"><span>Do a quick final wipe</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-42" data-index="42">
+      <div class="room">✨ Final Reset</div>
+      <h3>Living room guest-ready</h3>
+      <p class="detail">Cushions, surfaces, dust and finishing touches.</p>
+      <button class="pick" onclick="selectMission(42)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="42-0"><span>Clear visible surfaces</span></label><label class="step"><input type="checkbox" data-step="42-1"><span>Fluff/arrange cushions</span></label><label class="step"><input type="checkbox" data-step="42-2"><span>Put away random objects</span></label><label class="step"><input type="checkbox" data-step="42-3"><span>Dust the obvious surfaces</span></label><label class="step"><input type="checkbox" data-step="42-4"><span>Create a comfortable, welcoming space</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-43" data-index="43">
+      <div class="room">✨ Final Reset</div>
+      <h3>Final 48-hour reset</h3>
+      <p class="detail">Fresh towels, flowers or a candle, clean and enjoy your home.</p>
+      <button class="pick" onclick="selectMission(43)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="43-0"><span>Fresh sheets and towels</span></label><label class="step"><input type="checkbox" data-step="43-1"><span>Clear visible clutter</span></label><label class="step"><input type="checkbox" data-step="43-2"><span>Empty bins</span></label><label class="step"><input type="checkbox" data-step="43-3"><span>Add one welcoming touch such as flowers or a candle</span></label><label class="step"><input type="checkbox" data-step="43-4"><span>Stop decluttering and enjoy your home</span></label>
+      </div>
+    </article>
+
+    <article class="mission" id="mission-44" data-index="44">
+      <div class="room">🎨 Arts &amp; Hobbies</div>
+      <h3>Stationery drawers &amp; boxes</h3>
+      <p class="detail">Declutter all the drawers and boxes containing stationery, art and hobby supplies.</p>
+      <button class="pick" onclick="selectMission(44)">Pick this mission</button>
+      <div class="steps">
+        <div class="stepsTitle">60-minute mini-plan</div>
+        <label class="step"><input type="checkbox" data-step="44-0"><span>Gather all stationery from drawers and boxes</span></label><label class="step"><input type="checkbox" data-step="44-1"><span>Group pens, pencils, notebooks, paper and craft supplies</span></label><label class="step"><input type="checkbox" data-step="44-2"><span>Test pens/markers and remove dried-out or unusable items</span></label><label class="step"><input type="checkbox" data-step="44-3"><span>Remove duplicates and supplies you realistically will not use</span></label><label class="step"><input type="checkbox" data-step="44-4"><span>Organize the keepers into simple, easy-to-find groups</span></label>
+      </div>
+    </article>
+</div>
+</section>
+
+<section class="card">
+<div class="small">Overall progress</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="ptext"><span id="progress"></span><span id="percent"></span></div>
+<p style="text-align:center;color:#796d65;font-style:italic">“Does this home feel like me — but lighter?” ❤️</p>
+</section>
+
+<footer>Your progress and sub-mission checkboxes are saved on this device.</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const TASKS=[{"room": "🍽️ Kitchen", "name": "Mugs & glasses", "detail": "Take everything out and keep the ones you actually love and use.", "steps": ["Take everything out of the cabinet", "Remove chipped, duplicate or rarely used pieces", "Keep only the mugs and glasses you genuinely love", "Wipe the shelf/cabinet", "Put the keepers back with the everyday pieces easiest to reach"]}, {"room": "🍽️ Kitchen", "name": "Plates & bowls", "detail": "Remove chipped, duplicated or rarely used pieces.", "steps": ["Take everything out", "Remove chipped, duplicate or rarely used pieces", "Create a simple everyday set", "Wipe the shelf", "Put everything back neatly"]}, {"room": "🍽️ Kitchen", "name": "Containers & lids", "detail": "Match every container with a lid. Recycle orphan containers.", "steps": ["Take every food container and lid out", "Match each container with its lid", "Recycle orphaned or damaged pieces", "Choose the best everyday containers", "Stack the keepers neatly"]}, {"room": "🍽️ Kitchen", "name": "Cooking utensils", "detail": "Declutter tools and gadgets you never reach for.", "steps": ["Empty the utensil drawer/container", "Group similar tools together", "Remove duplicates and gadgets you never use", "Keep the tools you actually reach for", "Put the drawer back neatly"]}, {"room": "🍽️ Kitchen", "name": "Pots & pans", "detail": "Keep the pieces you use; remove duplicates and damaged items.", "steps": ["Take pots and pans out", "Remove damaged or duplicate pieces", "Choose your everyday favourites", "Check lids and matching pieces", "Stack them so the most-used are easiest to reach"]}, {"room": "🍽️ Kitchen", "name": "Pantry", "detail": "Check expiry dates and remove food you realistically won't eat.", "steps": ["Check expiry dates", "Remove food you know you will not eat", "Group similar ingredients", "Create a small 'use me first' area", "Wipe the shelf and put everything back"]}, {"room": "🍽️ Kitchen", "name": "Fridge & freezer", "detail": "Clear forgotten food and wipe one shelf at a time.", "steps": ["Check the fridge for forgotten food", "Check the freezer for mystery items", "Discard expired or unusable food", "Group similar foods together", "Wipe one shelf/drawer and reset it"]}, {"room": "🍽️ Kitchen", "name": "Kitchen countertops", "detail": "Put away everything that doesn't need to live on the counter.", "steps": ["Clear everything from the countertops", "Put away items that have a home", "Remove things that do not belong in the kitchen", "Choose only the items that deserve counter space", "Wipe the cleared surfaces"]}, {"room": "👗 Wardrobe", "name": "Tops & shirts", "detail": "Keep what fits, feels good and gets worn. Donate or sell the rest.", "steps": ["Pull out one category at a time", "Remove anything that does not fit", "Remove pieces you never choose", "Create keep/donate/sell piles", "Put the keepers back neatly"]}, {"room": "👗 Wardrobe", "name": "Trousers & jeans", "detail": "Remove pieces that don't fit or never get worn.", "steps": ["Pull everything out", "Try on anything you're unsure about", "Remove uncomfortable or rarely worn pieces", "Create keep/donate/sell piles", "Organize the keepers"]}, {"room": "👗 Wardrobe", "name": "Dresses", "detail": "Keep the dresses you genuinely love and would choose again.", "steps": ["Look at every dress", "Remove anything that does not fit or feel good", "Ask 'Would I choose this again today?'", "Create keep/donate/sell piles", "Hang the keepers neatly"]}, {"room": "👗 Wardrobe", "name": "Gym clothes", "detail": "Remove worn-out pieces and things you never wear.", "steps": ["Gather gym clothes together", "Remove worn-out pieces", "Remove pieces you never choose", "Keep enough for your real routine", "Fold/organize the keepers"]}, {"room": "👗 Wardrobe", "name": "Underwear & socks", "detail": "Remove uncomfortable, damaged or mismatched items.", "steps": ["Empty the drawer", "Remove damaged or uncomfortable pieces", "Match socks", "Remove excess duplicates", "Fold and organize what remains"]}, {"room": "👗 Wardrobe", "name": "Shoes", "detail": "Declutter shoes that hurt, don't fit or never get worn.", "steps": ["Gather shoes together", "Remove painful or uncomfortable pairs", "Remove pairs you never wear", "Clean or repair obvious keepers", "Organize the remaining shoes"]}, {"room": "👗 Wardrobe", "name": "Bags & accessories", "detail": "Keep the bags, belts and accessories you genuinely use.", "steps": ["Gather bags and accessories", "Remove duplicates and forgotten items", "Keep the pieces you genuinely use", "Create donate/sell piles", "Organize the keepers"]}, {"room": "📚 Books & Paper", "name": "Books", "detail": "Remove books you won't reread or realistically read.", "steps": ["Take books off one shelf at a time", "Remove books you will not reread", "Remove books you realistically will not read", "Create a donate pile", "Put favourite books back with breathing room"]}, {"room": "📚 Books & Paper", "name": "To-read shelf", "detail": "Create a small, intentional pile of books you truly want to read.", "steps": ["Gather unread books", "Be honest about what you will actually read", "Choose a manageable to-read pile", "Donate or relocate the rest", "Create a neat dedicated reading section"]}, {"room": "📚 Books & Paper", "name": "Old paperwork", "detail": "Recycle receipts, menus, old notes and unnecessary printouts.", "steps": ["Gather loose papers", "Recycle old receipts and menus", "Remove outdated notes", "Separate anything important", "Recycle the final paper pile"]}, {"room": "📚 Books & Paper", "name": "Important documents", "detail": "File or scan anything worth keeping; discard duplicates.", "steps": ["Gather important documents", "Separate keep/archive/discard", "Scan anything useful digitally", "Remove duplicate copies", "File the keepers in one logical place"]}, {"room": "📚 Books & Paper", "name": "Manuals & packaging", "detail": "Recycle manuals, boxes and instructions you no longer need.", "steps": ["Gather manuals and boxes", "Match manuals to items you still own", "Recycle packaging you do not need", "Keep only genuinely useful instructions", "Create one small manual/document area"]}, {"room": "📚 Books & Paper", "name": "Bookshelf styling", "detail": "Dust, regroup and simplify the visible shelves.", "steps": ["Remove everything from one shelf", "Dust the shelf", "Group books logically", "Remove decorative clutter you do not love", "Put back only your favourites"]}, {"room": "🛁 Bathroom", "name": "Skincare", "detail": "Remove empty, expired or abandoned products.", "steps": ["Gather skincare together", "Check expiry/open-date information", "Remove empty or abandoned products", "Create a 'finish first' group", "Organize everyday products where you can see them"]}, {"room": "🛁 Bathroom", "name": "Hair & body products", "detail": "Declutter products you never reach for.", "steps": ["Gather products together", "Remove empty or abandoned products", "Combine or group similar items", "Create a 'finish first' group", "Organize the keepers"]}, {"room": "🛁 Bathroom", "name": "Makeup", "detail": "Remove expired makeup and products you don't use.", "steps": ["Gather makeup together", "Remove expired or dried-out products", "Remove products you never use", "Create an everyday makeup group", "Organize the keepers"]}, {"room": "🛁 Bathroom", "name": "Toiletries", "detail": "Reduce duplicates and travel-size products.", "steps": ["Gather toiletries", "Remove duplicates you do not need", "Remove empty or abandoned products", "Create a small travel-size area if useful", "Organize everyday toiletries"]}, {"room": "🛁 Bathroom", "name": "Supplements", "detail": "Check dates and organize what you actually use.", "steps": ["Gather supplements", "Check expiry dates", "Remove anything you no longer use", "Group current products together", "Organize them so they are easy to find"]}, {"room": "🛁 Bathroom", "name": "Bathroom drawers", "detail": "Empty one drawer completely and put back only what belongs.", "steps": ["Empty one drawer completely", "Discard rubbish and empty packaging", "Remove products that belong elsewhere", "Group similar items", "Put only useful items back"]}, {"room": "🛁 Bathroom", "name": "Under the sink", "detail": "Remove old products and create breathing room.", "steps": ["Take everything out", "Remove expired or abandoned products", "Group cleaning/toiletry items", "Discard empty packaging", "Put the useful items back neatly"]}, {"room": "🛋️ Living Room", "name": "Coffee table", "detail": "Clear the surface and keep only a few intentional pieces.", "steps": ["Clear everything off", "Return items that belong elsewhere", "Remove clutter you do not need", "Choose a few intentional pieces", "Wipe the surface"]}, {"room": "🛋️ Living Room", "name": "TV unit", "detail": "Remove random objects, old packaging and unused items.", "steps": ["Clear the unit", "Remove old packaging and random objects", "Sort remotes/cables", "Return items to their proper homes", "Wipe the surface"]}, {"room": "🛋️ Living Room", "name": "Shelves & décor", "detail": "Keep what you genuinely love; remove visual noise.", "steps": ["Take décor from one area down", "Dust the shelves", "Keep only pieces you genuinely love", "Remove visual duplicates", "Style the remaining pieces with space around them"]}, {"room": "🛏️ Bedroom", "name": "Bedside tables", "detail": "Clear the surface and drawers of forgotten items.", "steps": ["Clear the bedside surface", "Empty the drawers", "Remove rubbish and random objects", "Keep only useful bedtime items nearby", "Wipe and reset the space"]}, {"room": "🛏️ Bedroom", "name": "Under-bed storage", "detail": "Remove things you forgot you owned.", "steps": ["Pull out the stored items", "Identify forgotten items", "Remove things you no longer need", "Create donate/sell/discard piles", "Put back only intentional storage"]}, {"room": "🔌 Tech", "name": "Cables & chargers", "detail": "Identify mystery cables and recycle broken duplicates.", "steps": ["Gather loose cables", "Identify what each cable belongs to", "Recycle broken or obsolete cables", "Pair chargers with devices", "Store the useful ones together"]}, {"room": "🔌 Tech", "name": "Random tech drawer", "detail": "Keep useful accessories; remove obsolete bits.", "steps": ["Empty the drawer", "Identify each accessory", "Remove obsolete or duplicate items", "Recycle electronic clutter appropriately", "Put useful accessories back neatly"]}, {"room": "✨ Final Reset", "name": "Entrance", "detail": "Declutter shoes, bags, keys, mail and random objects.", "steps": ["Clear shoes, bags and surfaces", "Recycle/discard old mail", "Return keys and everyday items to their homes", "Remove shoes/bags you do not use", "Create a calm, clear entryway"]}, {"room": "✨ Final Reset", "name": "The mystery drawer", "detail": "Empty it completely. Everything needs a real home.", "steps": ["Empty the entire drawer", "Group similar objects", "Throw away obvious rubbish", "Relocate anything that has a real home", "Put back only useful items"]}, {"room": "✨ Final Reset", "name": "Relocation round", "detail": "Return every stray item to its proper home.", "steps": ["Walk through every room", "Collect objects that are in the wrong place", "Return each item to its home", "Create a small 'no home yet' pile", "Give those final items a permanent home"]}, {"room": "✨ Final Reset", "name": "Visitor walk", "detail": "Walk through the house as a visitor and remove visual clutter.", "steps": ["Walk in through your front door", "Look at the home as a first-time visitor", "Identify the 5 most visually distracting things", "Remove or relocate them", "Do one final surface reset"]}, {"room": "✨ Final Reset", "name": "Guest bathroom", "detail": "Clear counters, fresh towels and a quick clean.", "steps": ["Clear the counter", "Remove personal clutter", "Put out fresh towels", "Check toiletries and toilet paper", "Give the room a quick clean"]}, {"room": "✨ Final Reset", "name": "Bedroom guest-ready", "detail": "Fresh bedding and clear visible surfaces.", "steps": ["Clear visible surfaces", "Put away clothes and random objects", "Freshen the bedding", "Clear the bedside area", "Create a calm, welcoming room"]}, {"room": "✨ Final Reset", "name": "Kitchen guest-ready", "detail": "Clear counters, empty bins and finish loose ends.", "steps": ["Clear countertops", "Put away appliances/items that do not need to be out", "Empty rubbish/recycling", "Check sink and dishes", "Do a quick final wipe"]}, {"room": "✨ Final Reset", "name": "Living room guest-ready", "detail": "Cushions, surfaces, dust and finishing touches.", "steps": ["Clear visible surfaces", "Fluff/arrange cushions", "Put away random objects", "Dust the obvious surfaces", "Create a comfortable, welcoming space"]}, {"room": "✨ Final Reset", "name": "Final 48-hour reset", "detail": "Fresh towels, flowers or a candle, clean and enjoy your home.", "steps": ["Fresh sheets and towels", "Clear visible clutter", "Empty bins", "Add one welcoming touch such as flowers or a candle", "Stop decluttering and enjoy your home"]}, {"room": "🎨 Arts & Hobbies", "name": "Stationery drawers & boxes", "detail": "Declutter all the drawers and boxes containing stationery, art and hobby supplies.", "steps": ["Gather all stationery from drawers and boxes", "Group pens, pencils, notebooks, paper and craft supplies", "Test pens/markers and remove dried-out or unusable items", "Remove duplicates and supplies you realistically will not use", "Organize the keepers into simple, easy-to-find groups"]}];
+let state={completed:{},steps:{}};
+try{state=JSON.parse(localStorage.getItem("declutter-v6")||'{"completed":{},"steps":{}}')}catch(e){}
+let selected=-1,seconds=3600,running=false,interval=null,warned=false;
+const $=id=>document.getElementById(id);(function(){const h=new Date().getHours();const g=h<12?"Good morning! 💛":h<18?"Good afternoon! 🌸":"Good evening! ✨";const e=document.getElementById("greeting");if(e)e.textContent=g;})();;
+
+function save(){localStorage.setItem("declutter-v6",JSON.stringify(state))}
+function toast(x){let t=$("toast");t.textContent=x;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function render(){
+ document.querySelectorAll(".mission").forEach((card,i)=>{
+   card.classList.toggle("done",!!state.completed[i]);
+   const b=card.querySelector(".pick");
+   b.textContent=(i===selected)?"✓ Selected":"Pick this mission";
+   b.className=(i===selected)?"selected":"pick";
+   card.querySelectorAll("input[type=checkbox]").forEach((cb,j)=>{
+     const key=i+"-"+j;
+     cb.checked=!!state.steps[key];
+     cb.parentElement.classList.toggle("done",cb.checked);
+   });
+ });
+ const n=Object.values(state.completed).filter(Boolean).length,p=Math.round(n/TASKS.length*100);
+ $("bar").style.width=p+"%";$("progress").textContent=n+" of "+TASKS.length+" missions complete";$("percent").textContent=p+"%";
+ if(selected>=0){
+   $("selectedName").textContent=TASKS[selected].name;
+   $("selectedDetail").textContent=TASKS[selected].detail;
+   $("timerHint").textContent="Working on: "+TASKS[selected].name;
+   $("complete").textContent=state.completed[selected]?"✓ Completed":"✓ Mark complete";
+ }
+}
+function selectMission(i){
+ selected=i;render();
+ document.querySelector(".selectedBox").scrollIntoView({behavior:"smooth",block:"start"});
+ toast("✨ "+TASKS[i].name+" selected");
+}
+document.querySelectorAll(".step input").forEach(cb=>{
+ cb.addEventListener("change",()=>{
+   const key=cb.getAttribute("data-step");
+   state.steps[key]=cb.checked;save();render();
+ });
+});
+$("surprise").onclick=()=>{
+ const r=[];for(let i=0;i<TASKS.length;i++)if(!state.completed[i])r.push(i);
+ if(!r.length){toast("🎉 Every mission is complete!");return}
+ selectMission(r[Math.floor(Math.random()*r.length)]);
+};
+function draw(){let m=Math.floor(seconds/60),s=seconds%60;$("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+$("start").onclick=()=>{
+ if(selected<0){toast("💛 Pick a mission first!");return}
+ if(running){clearInterval(interval);running=false;$("start").textContent="▶ Resume";return}
+ running=true;$("start").textContent="⏸ Pause";
+ interval=setInterval(()=>{
+  seconds--;draw();
+  if($("warning").checked&&!warned&&seconds===600){warned=true;toast("✨ 10 minutes left — keep going!")}
+  if(seconds<=0){clearInterval(interval);running=false;$("start").textContent="▶ Start";toast("🎉 One hour complete!")}
+ },1000);
+};
+$("reset").onclick=()=>{clearInterval(interval);running=false;seconds=3600;warned=false;draw();$("start").textContent="▶ Start"};
+$("complete").onclick=()=>{
+ if(selected<0){toast("💛 Pick a mission first!");return}
+ state.completed[selected]=!state.completed[selected];save();render();
+ toast(state.completed[selected]?"🎉 Mission complete!":"Mission reopened");
+};
+$("welcomeSurprise").onclick=()=>{
+ const r=[];for(let i=0;i<TASKS.length;i++)if(!state.completed[i])r.push(i);
+ if(!r.length){toast("🎉 Every mission is complete!");return}
+ selectMission(r[Math.floor(Math.random()*r.length)]);
+};
+$("browseMissions").onclick=()=>{
+ document.getElementById("missions").scrollIntoView({behavior:"smooth",block:"start"});
+};
+render();draw();
+</script>
+</body>
+</html>
